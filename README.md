@@ -11,14 +11,14 @@ and basic authentication with the help of this module
 
 **Disclaimer: Application-only Authentication supports limited endpoints**
 
-#Installation
+# Installation
 
 ```npm
 	npm install tweetur --save
 ```
 
 
-#Usage 
+# Usage 
 
 ```javascript
 	const Tweetur = require('tweetur') //
@@ -50,19 +50,19 @@ you can get you keys in your developer account dashboard at [twitter](https://de
 	})
 ```
 
-###callback for authenticate method is recommended...
+### callback for authenticate method is recommended...
 authenticate method is used to to authenticate your credentials with twitter
 and the response body of this request would contain the access_token...
 you are good to go now
 
-#Methods
+# Methods
 List of all the methods covered...
 
 Please refer to the twitter parameter for more information about parameters,
 parameters can be ommitted in some methods but most of the time 
 parameters are required and callbacks are highly recommended
 
-####Note: params should always be an object
+#### Note: params should always be an object
 
 ```javascript 
 	//tweetur class methods
@@ -85,7 +85,7 @@ parameters are required and callbacks are highly recommended
 ```
 
 
-#EXAMPLE
+# EXAMPLE
 
 userTimeline method is used to get a user timeline by specifying some 
 parameter that you can look up at the [statuses/user_timeline](https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline) endpoint.
@@ -109,10 +109,10 @@ in this example screen_name and count parameters are specified
 hence it will only return a one tweet status of the screen_name parameter
 
 
-#FIND YOUR ENDPOINT HERE
+# FIND YOUR ENDPOINT HERE
 [API REFERENCE INDEX](https://developer.twitter.com/en/docs/api-reference-index)
 
-#Status
+# Status
 --IN PROGRESS--
 Email me: [rayranilfu7o7@gmail.com](rayranilfu7o7@gmail.com)
 
