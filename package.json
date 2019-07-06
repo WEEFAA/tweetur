@@ -1,6 +1,6 @@
 {
   "name": "tweetur",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "This module is for twitter api using application-only authentication.",
   "main": "index.js",
   "keywords": [
@@ -15,5 +15,9 @@
   "dependencies": {
     "btoa": "^1.2.1",
     "request": "^2.88.0"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/WEEFAA/tweetur"
   }
 }
