@@ -1,11 +1,8 @@
 {
   "name": "tweetur",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "This module is for twitter api using application-only authentication.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [
     "twitter",
     "api",
