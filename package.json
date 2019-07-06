@@ -1,0 +1,22 @@
+{
+  "name": "tweetur",
+  "version": "1.2.2",
+  "description": "This module is for twitter api using application-only authentication.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "twitter",
+    "api",
+    "application-only",
+    "authentication",
+    "tweetur"
+  ],
+  "author": "Ray Quijada <rayranilfu7o7@gmail.com> (http://twitter.com/rayranilweefa)",
+  "license": "ISC",
+  "dependencies": {
+    "btoa": "^1.2.1",
+    "request": "^2.88.0"
+  }
+}
