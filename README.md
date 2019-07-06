@@ -50,7 +50,7 @@ you can get you keys in your developer account dashboard at [twitter](https://de
 	})
 ```
 
-### callback for authenticate method is recommended...
+### Authenticate
 authenticate method is used to to authenticate your credentials with twitter
 and the response body of this request would contain the access_token...
 you are good to go now
@@ -60,7 +60,7 @@ List of all the methods covered...
 
 Please refer to the twitter parameter for more information about parameters,
 parameters can be ommitted in some methods but most of the time 
-parameters are required and callbacks are highly recommended
+parameters are required and callback is required
 
 #### Note: params should always be an object
 
