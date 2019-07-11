@@ -16,13 +16,13 @@ let qs = require('querystring')
 
 
 function Tweetur(keys){
-	this.credentials = keys
+	this.credentials = keys || {}
 	this.access_token = null
 	this.hasCallback = true
 }
 
 
-// ver 1.2.1 prototype structure 
+// ver 1.2.1 prototype structure
 
 Tweetur.prototype.authenticate = function(callback){
 	this.test({callback},(error) => {
@@ -33,7 +33,7 @@ Tweetur.prototype.authenticate = function(callback){
 			url:"https://api.twitter.com/oauth2/token",
 			headers:{
 				"Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-				Authorization: "Basic " + this.basic_token 
+				"Authorization": "Basic " + this.basic_token
 			},
 			body: "grant_type=client_credentials"
 		}, (err,response,body) => {
@@ -50,7 +50,7 @@ Tweetur.prototype.authenticate = function(callback){
 
 
 Tweetur.prototype.userTimeline = function(params,callback){
-	//validate first 
+	//validate first
 	this.test({params,callback},(error) => {
 		try{
 			if(error){
@@ -65,9 +65,8 @@ Tweetur.prototype.userTimeline = function(params,callback){
 			if(this.hasCallback){
 				return callback(e,null,null)
 			}
-			console.log(e)
 		}
-	})	
+	})
 }
 
 //followers
@@ -86,7 +85,6 @@ Tweetur.prototype.followersList = function(params,callback){
 			if(this.hasCallback){
 				return callback(error,null,null)
 			}
-		    console.log(error)
 		}
 	})
 }
@@ -106,9 +104,8 @@ Tweetur.prototype.friendsList = function(params,callback){
 			})
 		}catch(error){
 			if(this.hasCallback){
-				return callback(error,null,null)	
+				return callback(error,null,null)
 			}
-			console.log(error)
 		}
 	})
 }
@@ -129,7 +126,6 @@ Tweetur.prototype.followersIds = function(params,callback){
 			if(this.hasCallback){
 				return callback(error,null,null)
 			}
-			console.log(error)
 		}
 	})
 }
@@ -149,7 +145,6 @@ Tweetur.prototype.friendsIds = function(params,callback){
 			if(this.hasCallback){
 				return callback(error,null,null)
 			}
-			console.log(error)
 		}
 	})
 }
@@ -169,7 +164,6 @@ Tweetur.prototype.usersLookUp = function(params,callback){
 			if(this.hasCallback){
 				return callback(error,null,null)
 			}
-			console.log(error)
 		}
 	})
 }
@@ -189,32 +183,33 @@ Tweetur.prototype.userShow = function(params,callback){
 			if(this.hasCallback){
 				return callback(error,null,null)
 			}
-			console.log(error)
 		}
 	})
 }
 
-Tweetur.prototype.usersSuggestions = function(params,callback){
-	this.test({params,callback},(error) => {
-		try{
-			if(error){
-				throw new Error(error)
-			}
-			this.get("usersuggestions",params,(err,response,body) => {
-				if(this.hasCallback && typeof callback == 'function'){
-					return callback(err,response,body)
-				}else if(this.hasCallback && typeof params == 'function'){
-					return params(err,response,body)
-				}
-			})
-		}catch(error){
-			if(this.hasCallback){
-				return callback(error,null,null)
-			}
-			console.log(error)
-		}
-	},"param_ommit")
-}
+
+// @@@ DEPRECATING USER SUGGESTIONS
+// Tweetur.prototype.usersSuggestions = function(params,callback){
+// 	this.test({params,callback},(error) => {
+// 		try{
+// 			if(error){
+// 				throw new Error(error)
+// 			}
+// 			this.get("usersuggestions",params,(err,response,body) => {
+// 				if(this.hasCallback && typeof callback == 'function'){
+// 					return callback(err,response,body)
+// 				}else if(this.hasCallback && typeof params == 'function'){
+// 					return params(err,response,body)
+// 				}
+// 			})
+// 		}catch(error){
+// 			if(this.hasCallback){
+// 				return callback(error,null,null)
+// 			}
+// 			console.log(error)
+// 		}
+// 	},"param_ommit")
+// }
 
 Tweetur.prototype.checkLimit = function(params,callback){
 	this.test({params,callback},(error) => {
@@ -231,7 +226,6 @@ Tweetur.prototype.checkLimit = function(params,callback){
 			if(this.hasCallback){
 				return callback(error,null,null)
 			}
-			console.log(error)
 		}
 	})
 }
@@ -246,7 +240,7 @@ Tweetur.prototype.revoke = function(callback){
 				url: "https://api.twitter.com/oauth2/invalidate_token",
 				headers:{
 					"Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-					Authorization: "Basic " + this.basic_token
+					"Authorization": "Basic " + this.basic_token
 				},
 				body: "access_token=" + this.access_token
 			},(err,response,body) => {
@@ -258,7 +252,6 @@ Tweetur.prototype.revoke = function(callback){
 			if(this.hasCallback){
 				return callback(error,null,null)
 			}
-			console.log(error)
 		}
 	},"no_param")
 }
@@ -269,24 +262,30 @@ Tweetur.prototype.get = function(endpoint,params,cb){
 	switch(endpoint){
 		case "usertimeline":
 			url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
-			break;
+			break
 		case "followerslist":
 			url = "https://api.twitter.com/1.1/followers/list.json"
-			break;
+			break
 		case "friendslist":
 			url = "https://api.twitter.com/1.1/friends/list.json"
-			break;
+			break
 		case "followersids":
 			url = "https://api.twitter.com/1.1/followers/ids.json"
-			break;
+			break
 		case "friendsids":
 			url = "https://api.twitter.com/1.1/friends/ids.json"
-			break;
+			break
+		case "usershow":
+			url = "https://api.twitter.com/1.1/users/show.json"
+			break
+		case "usersuggestions":
+			url = "https://api.twitter.com/1.1/users/suggestions.json"
+			break
 		case "checklimit":
 			url = "https://api.twitter.com/1.1/application/rate_limit_status.json"
-			let resources = params.resources
+			let resources = params.resources || []
 			params.resources = resources.join(",")
-			break;
+			break
 		case "userslookup":
 			url = "https://api.twitter.com/1.1/users/lookup.json"
 			if(params.user_id){
@@ -294,23 +293,15 @@ Tweetur.prototype.get = function(endpoint,params,cb){
 			}else if(params.screen_name){
 				params.screen_name = params.screen_name.join(",")
 			}
-			break;
-		case "usershow":
-			url = "https://api.twitter.com/1.1/users/show.json"
-			break;
-		case "usersuggestions":
-			url = "https://api.twitter.com/1.1/users/suggestions.json"
-
-			break;
+			break
 		default:
 			url = ''
-			console.log("NO_URL")
 	}
 	//make the request when the filter data are all ready
 	request({
 		url,
 		headers:{
-			Authorization: "Bearer " + this.access_token
+			"Authorization": "Bearer " + this.access_token
 		},
 		qs:params
 	},(err,response,body) => {
@@ -321,41 +312,35 @@ Tweetur.prototype.get = function(endpoint,params,cb){
 Tweetur.prototype.test = function(p,cb,ref=""){
 	try{
 		//check if user specified the callback or ommitted it
-		if(typeof p.callback == 'function'){
-			this.hasCallback = true
-		}else{
-			this.hasCallback = false
-		}
+		typeof p.callback === "function" ? this.hasCallback = true : this.hasCallback = false
 		//always validating the tokens and credetials
-		if(!this.access_token || typeof this.credentials != 'object' && ref != 'authenticate'){
+		if(!this.access_token || typeof this.credentials !== 'object' && ref !== 'authenticate'){
 			 throw new Error("CREDENTIALS NOT VALID")
 		}
-		//validating parameter
-		// if(typeof p.params != 'object'){
-		// 	throw new TypeError('INVALID PARAMETER')
-		// }
+		//
 		switch(ref){
 			case "param_ommit":
-				if(typeof p.params == 'function' && typeof p.callback == 'undefined'){
-					//paramter is ommitted
+				//parameter is ommitted
+				//first arg act as the callback
+				if(typeof p.params === 'function' && typeof p.callback === 'undefined'){
 					this.hasCallback = true
 				}
-				break;
+				break
 			case "no_param":
-				if(typeof p.callback == 'function'){
+				if(typeof p.callback === 'function'){
 					this.hasCallback = true
-				}else if(typeof p.callback != 'undefined' && typeof p.callback != 'function'){
+				}else if(typeof p.callback !== 'undefined' && typeof p.callback !== 'function'){
 					throw new TypeError("INVALID CALLBACK")
 				}else{
 					this.hasCallback = false
 				}
-				break;
-			default: 
-				if(typeof p.params != 'object'){
+				break
+			default:
+				if(typeof p.params !== 'object'){
 					throw new TypeError('INVALID PARAMETER')
 				}
 		}
-		//if all error routes passed, call the callback with null value
+		//if all error routes passed, call the callback with null value <-- no errors
 		cb(null)
 
 	}catch(e){
@@ -377,7 +362,7 @@ Tweetur.prototype._handler = function(err,statusCode,errCallback){
 			break
 		case 403:
 			errCallback(true,"FORBIDDEN")
-			break	
+			break
 		case 200:
 			errCallback(false,"STATUS OK!")
 			break
@@ -389,5 +374,3 @@ Tweetur.prototype._handler = function(err,statusCode,errCallback){
 
 
 module.exports = Tweetur
-
-
