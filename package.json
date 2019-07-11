@@ -13,8 +13,8 @@
   "author": "Ray Quijada <rayranilfu7o7@gmail.com> (http://twitter.com/rayranilweefa)",
   "license": "MIT",
   "dependencies": {
-    "btoa": "^1.2.1",
-    "request": "^2.88.0"
+    "btoa": "1.2.1",
+    "request": "2.88.0"
   },
   "repository": {
     "type" : "git",
