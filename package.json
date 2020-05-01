@@ -17,7 +17,7 @@
     "request": "2.88.0"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/WEEFAA/tweetur"
+    "type": "git",
+    "url": "https://github.com/WEEFAA/tweetur"
   }
 }
