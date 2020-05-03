@@ -6,8 +6,8 @@ function evaluateArgs(args, opts = {}){
 	let hasCallback = true
 	const { allowFirstArgAsCallback = false } = opts
 	// errors
-	const callbackErr = new TypeError("Callback function invalid")
-	const paramsErr = new TypeError("Parameter passed was invalid")
+	const callbackErr = new TypeError("Invalid callback function")
+	const paramsErr = new TypeError("Invalid parameter, it must be an object that contains key:value pair that defines each parameter on this endpoint")
 	// check if the callback is omitted 
 	switch(args.length){
 		case 2: 
