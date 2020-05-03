@@ -19,9 +19,8 @@ const { evaluateArgs, generateSignature, checkAuth } = require('./utils')
 
 function Tweetur(keys){
 	this.credentials = keys || {}
-	this.access_token = null
+	this.bearer_token = null
 	this.basic_token = ""
-	this.hasCallback = true
 }
 
 
@@ -52,7 +51,7 @@ Tweetur.prototype.authenticate = function(callback){
 				}
 				let data = JSON.parse(body) // parse data
 				// set instance access_token
-				this.access_token = data.access_token 
+				this.bearer_token = data.access_token 
 				// return data through calling callback or return a promise
 				if(hasCallback) return callback(null, data)
 				return resolve(data)
@@ -68,7 +67,7 @@ Tweetur.prototype.userTimeline = function(params,callback){
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
-			checkAuth(null, { access_token: this.access_token })
+			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
 			this.get("USERTIMELINE",params,(err,response,body) => {
@@ -92,7 +91,7 @@ Tweetur.prototype.followersList = function(params,callback){
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
-			checkAuth(null, { access_token: this.access_token })
+			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
 			this.get("FOLLOWERSLIST",params,(err,response,body) => {
@@ -117,7 +116,7 @@ Tweetur.prototype.friendsList = function(params,callback){
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
-			checkAuth(null, { access_token: this.access_token })
+			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
 			this.get("FRIENDSLIST",params,(err,response,body) => {
@@ -140,7 +139,7 @@ Tweetur.prototype.followersIds = function(params,callback){
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
-			checkAuth(null, { access_token: this.access_token })
+			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
 			this.get("FOLLOWERSIDS",params,(err,response,body) => {
@@ -163,7 +162,7 @@ Tweetur.prototype.friendsIds = function(params,callback){
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
-			checkAuth(null, { access_token: this.access_token })
+			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
 			this.get("FRIENDSIDS",params,(err,response,body) => {
@@ -186,7 +185,7 @@ Tweetur.prototype.usersLookUp = function(params,callback){
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
-			checkAuth(null, { access_token: this.access_token })
+			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
 			this.get("USERSLOOKUP",params,(err,response,body) => {
@@ -209,7 +208,7 @@ Tweetur.prototype.userShow = function(params,callback){
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
-			checkAuth(null, { access_token: this.access_token })
+			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
 			this.get("USERSSHOW",params,(err,response,body) => {
@@ -232,7 +231,7 @@ Tweetur.prototype.checkLimit = function(params,callback){
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
-			checkAuth(null, { access_token: this.access_token })
+			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
 			this.get("CHECKLIMIT",params,(err,response,body) => {
@@ -256,7 +255,7 @@ Tweetur.prototype.revoke = function(callback){
 		try{
 			const evaluationOpts = {
 				allowFirstArgAsCallback: true,
-				credentials: { access_token: this.access_token }
+				credentials: { access_token: this.bearer_token }
 			}
 			const hasCallback = evaluateArgs(arguments,evaluationOpts)
 			// signature options
@@ -271,7 +270,7 @@ Tweetur.prototype.revoke = function(callback){
 					oauth_nonce: btoa(this.credentials.consumer_key + ":" + timestamp),
 					oauth_timestamp: timestamp,
 					oauth_version: "1.0",
-					access_token: this.access_token
+					access_token: this.bearer_token
 				},
 				consumer_secret: this.credentials.consumer_secret,
 				token_secret: this.credentials.access_token_secret
@@ -281,7 +280,7 @@ Tweetur.prototype.revoke = function(callback){
 			// request for to revoke access_token
 
 			request.post({
-				url: `https://api.twitter.com/oauth2/invalidate_token?access_token=${this.access_token}`,
+				url: `https://api.twitter.com/oauth2/invalidate_token?access_token=${this.bearer_token}`,
 				headers:{
 					"Authorization": `OAuth oauth_consumer_key="${this.credentials.consumer_key}", ` +
 				   	`oauth_nonce="${signatureOptions.parameters.oauth_nonce}", ` +
@@ -350,7 +349,7 @@ Tweetur.prototype.get = function(endpoint,params,cb){
 	request({
 		url,
 		headers:{
-			"Authorization": "Bearer " + this.access_token
+			"Authorization": "Bearer " + this.bearer_token
 		},
 		qs:params
 	},(err,response,body) => {
