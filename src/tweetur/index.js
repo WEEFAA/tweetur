@@ -228,30 +228,6 @@ Tweetur.prototype.userShow = function(params,callback){
 	})
 }
 
-
-// @@@ DEPRECATING USER SUGGESTIONS
-// Tweetur.prototype.usersSuggestions = function(params,callback){
-// 	this.test({params,callback},(error) => {
-// 		try{
-// 			if(error){
-// 				throw new Error(error)
-// 			}
-// 			this.get("usersuggestions",params,(err,response,body) => {
-// 				if(this.hasCallback && typeof callback == 'function'){
-// 					return callback(err,response,body)
-// 				}else if(this.hasCallback && typeof params == 'function'){
-// 					return params(err,response,body)
-// 				}
-// 			})
-// 		}catch(error){
-// 			if(this.hasCallback){
-// 				return callback(error,null,null)
-// 			}
-// 			console.log(error)
-// 		}
-// 	},"param_ommit")
-// }
-
 Tweetur.prototype.checkLimit = function(params,callback){
 	return new Promise((resolve, reject) => {
 		try{
@@ -353,9 +329,6 @@ Tweetur.prototype.get = function(endpoint,params,cb){
 			break
 		case "USERSSHOW":
 			url = "https://api.twitter.com/1.1/users/show.json"
-			break
-		case "usersuggestions":
-			url = "https://api.twitter.com/1.1/users/suggestions.json"
 			break
 		case "CHECKLIMIT":
 			url = "https://api.twitter.com/1.1/application/rate_limit_status.json"
