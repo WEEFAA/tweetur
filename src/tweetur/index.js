@@ -385,44 +385,6 @@ Tweetur.prototype.get = function(endpoint,params,cb){
 	})
 }
 
-Tweetur.prototype.test = function(p,cb,ref=""){
-	try{
-		//check if user specified the callback or ommitted it
-		typeof p.callback === "function" ? this.hasCallback = true : this.hasCallback = false
-		//always validating the tokens and credetials
-		if(!this.access_token || typeof this.credentials !== 'object' && ref !== 'authenticate'){
-			 throw new Error("CREDENTIALS NOT VALID")
-		}
-		//
-		switch(ref){
-			case "param_ommit":
-				//parameter is ommitted
-				//first arg act as the callback
-				if(typeof p.params === 'function' && typeof p.callback === 'undefined'){
-					this.hasCallback = true
-				}
-				break
-			case "no_param":
-				if(typeof p.callback === 'function'){
-					this.hasCallback = true
-				}else if(typeof p.callback !== 'undefined' && typeof p.callback !== 'function'){
-					throw new TypeError("INVALID CALLBACK")
-				}else{
-					this.hasCallback = false
-				}
-				break
-			default:
-				if(typeof p.params !== 'object'){
-					throw new TypeError('INVALID PARAMETER')
-				}
-		}
-		//if all error routes passed, call the callback with null value <-- no errors
-		cb(null)
-
-	}catch(e){
-		cb(e)
-	}
-}
 
 Tweetur.prototype._handler = function(err,statusCode,errCallback){
 	if(err != null){
