@@ -4,6 +4,8 @@ let qs = require('querystring')
 
 // @utilities
 const { evaluateArgs, generateSignature, checkAuth } = require('./utils')
+// config
+const { TWEETUR_CREDENTIALS } = require('./config')
 
 // https://api.twitter.com/oauth2/token
 // https://api.twitter.com/oauth2/invalidate_token
@@ -17,8 +19,15 @@ const { evaluateArgs, generateSignature, checkAuth } = require('./utils')
 // https://api.twitter.com/1.1/users/show.json
 
 
-function Tweetur(keys){
-	this.credentials = keys || {}
+function Tweetur(user_credentials){
+	// check if passed 'user_credentials' are valid
+	const user_credential_keys = Object.keys(user_credentials)
+	for(let credential of Object.keys(TWEETUR_CREDENTIALS)){
+		if( !user_credential_keys.includes(credential) || typeof user_credentials[credential] !== TWEETUR_CREDENTIALS[credential]){
+			throw new Error(`Credential: ${credential} is required and must have a type of ${TWEETUR_CREDENTIALS[credential]}`)
+		}
+	}
+	this.credentials = user_credentials || {}
 	this.bearer_token = null
 	this.basic_token = ""
 }
