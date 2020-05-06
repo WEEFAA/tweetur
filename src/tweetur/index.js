@@ -8,17 +8,6 @@ const { evaluateArgs, generateSignature, checkAuth, checkParams } = require('./u
 // config
 const { TWEETUR_CREDENTIALS } = require('./config')
 
-// https://api.twitter.com/oauth2/token
-// https://api.twitter.com/oauth2/invalidate_token
-// https://api.twitter.com/1.1/statuses/user_timeline.json
-// https://api.twitter.com/1.1/application/rate_limit_status.json
-// https://api.twitter.com/1.1/followers/list.json
-// https://api.twitter.com/1.1/friends/ids.json
-// https://api.twitter.com/1.1/followers/ids.json
-// https://api.twitter.com/1.1/friends/list.json
-// https://api.twitter.com/1.1/users/lookup.json
-// https://api.twitter.com/1.1/users/show.json
-
 
 function Tweetur(user_credentials){
 	// check if passed 'user_credentials' are valid
