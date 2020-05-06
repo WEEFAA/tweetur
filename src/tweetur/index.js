@@ -2,8 +2,9 @@ let request = require('request')
 let btoa = require("btoa")
 let qs = require('querystring')
 
+const oauthSignature = require('oauth-signature')
 // @utilities
-const { evaluateArgs, generateSignature, checkAuth } = require('./utils')
+const { evaluateArgs, generateSignature, checkAuth, checkParams } = require('./utils')
 // config
 const { TWEETUR_CREDENTIALS } = require('./config')
 
@@ -73,13 +74,16 @@ Tweetur.prototype.authenticate = function(callback){
 
 
 Tweetur.prototype.userTimeline = function(params,callback){
+	const api_endpoint_info = "USERTIMELINE"
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
 			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
-			this.get("USERTIMELINE",params,(err,response,body) => {
+			// check params
+			checkParams(api_endpoint_info, params)
+			this.get(api_endpoint_info, params, (err,response,body) => {
 				if(err){
 					if(hasCallback) return callback(err, {})
 					return reject(e)
@@ -97,13 +101,16 @@ Tweetur.prototype.userTimeline = function(params,callback){
 
 //followers
 Tweetur.prototype.followersList = function(params,callback){
+	const api_endpoint_info = "FOLLOWERSLIST"
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
 			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
-			this.get("FOLLOWERSLIST",params,(err,response,body) => {
+			// check params
+			checkParams(api_endpoint_info, params)
+			this.get(api_endpoint_info, params, (err,response,body) => {
 				if(err){
 					if(hasCallback) return callback(err, {})
 					return reject(e)
@@ -122,13 +129,16 @@ Tweetur.prototype.followersList = function(params,callback){
 
 
 Tweetur.prototype.friendsList = function(params,callback){
+	const api_endpoint_info = "FRIENDSLIST"
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
 			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
-			this.get("FRIENDSLIST",params,(err,response,body) => {
+			// check params
+			checkParams(api_endpoint_info,params)
+			this.get(api_endpoint_info, params, (err,response,body) => {
 				if(err){
 					if(hasCallback) return callback(err, {})
 					return reject(e)
@@ -145,13 +155,16 @@ Tweetur.prototype.friendsList = function(params,callback){
 }
 
 Tweetur.prototype.followersIds = function(params,callback){
+	const api_endpoint_info = "FOLLOWERSIDS"
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
 			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
-			this.get("FOLLOWERSIDS",params,(err,response,body) => {
+			// check params
+			checkParams(api_endpoint_info, params)
+			this.get(api_endpoint_info, params, (err,response,body) => {
 				if(err){
 					if(hasCallback) return callback(err, {})
 					return reject(e)
@@ -168,13 +181,16 @@ Tweetur.prototype.followersIds = function(params,callback){
 }
 
 Tweetur.prototype.friendsIds = function(params,callback){
+	const api_endpoint_info = "FRIENDSIDS"
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
 			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
-			this.get("FRIENDSIDS",params,(err,response,body) => {
+			// check params
+			checkParams(api_endpoint_info, params)
+			this.get(api_endpoint_info, params, (err,response,body) => {
 				if(err){
 					if(hasCallback) return callback(err, {})
 					return reject(e)
@@ -191,12 +207,15 @@ Tweetur.prototype.friendsIds = function(params,callback){
 }
 
 Tweetur.prototype.usersLookUp = function(params,callback){
+	const api_endpoint_info = "USERSLOOKUP"
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
 			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
+			// check params
+			checkParams(api_endpoint_info,params)
 			this.get("USERSLOOKUP",params,(err,response,body) => {
 				if(err){
 					if(hasCallback) return callback(err, {})
@@ -214,13 +233,16 @@ Tweetur.prototype.usersLookUp = function(params,callback){
 }
 
 Tweetur.prototype.userShow = function(params,callback){
+	const api_endpoint_info = "USERSSHOW"
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
 			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
-			this.get("USERSSHOW",params,(err,response,body) => {
+			// check params 
+			checkParams(api_endpoint_info, params)
+			this.get(api_endpoint_info, params, (err,response,body) => {
 				if(err){
 					if(hasCallback) return callback(err, {})
 					return reject(e)
@@ -237,13 +259,16 @@ Tweetur.prototype.userShow = function(params,callback){
 }
 
 Tweetur.prototype.checkLimit = function(params,callback){
+	const api_endpoint_info = "CHECKLIMIT"
 	return new Promise((resolve, reject) => {
 		try{
 			// check bearer token
 			checkAuth(null, { access_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
-			this.get("CHECKLIMIT",params,(err,response,body) => {
+			// check params
+			checkParams(api_endpoint_info, params)
+			this.get(api_endpoint_info, params, (err,response,body) => {
 				if(err){
 					if(hasCallback) return callback(err, {})
 					return reject(e)
@@ -267,45 +292,42 @@ Tweetur.prototype.revoke = function(callback){
 				credentials: { access_token: this.bearer_token }
 			}
 			const hasCallback = evaluateArgs(arguments,evaluationOpts)
-			// signature options
+			// tested signature invocation
 			const timestamp = Math.round(Date.now() / 1000)
-			const signatureOptions = {
-				method: 'POST',
-				url: `https://api.twitter.com/oauth2/invalidate_token`,
-				parameters: {
-					oauth_consumer_key: this.credentials.consumer_key,
-					oauth_token: this.credentials.access_token,
-					oauth_signature_method: "HMAC-SHA1",
-					oauth_nonce: btoa(this.credentials.consumer_key + ":" + timestamp),
-					oauth_timestamp: timestamp,
-					oauth_version: "1.0",
-					access_token: this.bearer_token
-				},
-				consumer_secret: this.credentials.consumer_secret,
-				token_secret: this.credentials.access_token_secret
-			}
+			const url = "https://api.twitter.com/oauth2/invalidate_token",
+			parameters = {
+				oauth_consumer_key: this.credentials.consumer_key,
+				oauth_token: this.credentials.access_token,
+				oauth_nonce: btoa(this.credentials.consumer_key + ":" + timestamp),
+				oauth_timestamp: timestamp,
+				oauth_signature_method: "HMAC-SHA1",
+				oauth_version: "1.0",
+				access_token: this.bearer_token
+			},
+			method = "POST",
+			consumerSecret = this.credentials.consumer_secret,
+			token_secret = this.credentials.access_token_secret,
+			encodeSignature = true
 
-			const oauth_signature = generateSignature({...signatureOptions})
+			const signature = oauthSignature.generate(method, url, parameters, consumerSecret, token_secret, { encodeSignature })
+			// authorization header
+			const authHeader = 'OAuth oauth_consumer_key="' + parameters.oauth_consumer_key + '", ' +
+		   	'oauth_nonce="' + parameters.oauth_nonce + '", ' +
+		   	'oauth_signature="' + signature + '", ' +
+		    'oauth_signature_method="' + parameters.oauth_signature_method + '", ' + 
+		    'oauth_timestamp="' + parameters.oauth_timestamp + '", ' +
+		    'oauth_token="' + parameters.oauth_token + '", ' + 
+		    'oauth_version="' + parameters.oauth_version + '"'
 			// request for to revoke access_token
-
 			request.post({
-				url: `https://api.twitter.com/oauth2/invalidate_token?access_token=${this.bearer_token}`,
-				headers:{
-					"Authorization": `OAuth oauth_consumer_key="${this.credentials.consumer_key}", ` +
-				   	`oauth_nonce="${signatureOptions.parameters.oauth_nonce}", ` +
-				   	`oauth_signature="${oauth_signature}", ` +
-				    `oauth_signature_method="${signatureOptions.parameters.oauth_signature_method}", ` + 
-				    `oauth_timestamp="${signatureOptions.parameters.oauth_timestamp}", ` +
-				    `oauth_token="${signatureOptions.parameters.oauth_token}", ` + 
-				    `oauth_version="${signatureOptions.parameters.oauth_version}"`
-				}
+				url: `${url}?access_token=${this.bearer_token}`,
+				headers:{ "Authorization": authHeader }
 			},(err,response,body) => {
 				if(err){
 					if(hasCallback) return callback(err, {})
 					return reject(err)
 				}	
 				const data = JSON.parse(body) // parse body
-				// console.log(response)
 				// return data through calling callback or return a promise
 				if(hasCallback) return callback(null, data)
 				return resolve(data)
