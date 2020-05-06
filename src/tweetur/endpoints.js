@@ -2,6 +2,7 @@
 
 const USERTIMELINE = {
 	url: "https://api.twitter.com/1.1/statuses/user_timeline.json",
+	route: "statuses/user_timeline.json",
 	params: {
 		user_id: {
 			required: false,
@@ -40,6 +41,7 @@ const USERTIMELINE = {
 
 const FOLLOWERSLIST = {
 	url: "https://api.twitter.com/1.1/followers/list.json",
+	route: "followers/list.json",
 	params: {
 		user_id: {
 			required: false,
@@ -70,6 +72,7 @@ const FOLLOWERSLIST = {
 
 const FRIENDSLIST = {
 	url: "https://api.twitter.com/1.1/friends/list.json",
+	route: "friends/list.json",
 	params: {
 		user_id: {
 			required: false,
@@ -100,6 +103,7 @@ const FRIENDSLIST = {
 
 const FOLLOWERSIDS = {
 	url: "https://api.twitter.com/1.1/followers/ids.json",
+	route: "followers/ids.json",
 	params: {
 		user_id: {
 			required: false,
@@ -126,6 +130,7 @@ const FOLLOWERSIDS = {
 
 const FRIENDSIDS = {
 	url: "https://api.twitter.com/1.1/friends/ids.json",
+	route: "friends/ids.json",
 	params: {
 		user_id: {
 			required: false,
@@ -152,6 +157,7 @@ const FRIENDSIDS = {
 
 const USERSLOOKUP = {
 	url: "https://api.twitter.com/1.1/users/lookup.json",
+	route: "users/lookup.json",
 	params: {
 		screen_name: {
 			required: false,
@@ -170,12 +176,15 @@ const USERSLOOKUP = {
 		tweet_mode: {
 			required: false,
 			type: "boolean"
+
+
 		}
 	}
 }
 
 const USERSSHOW = {
 	url: "https://api.twitter.com/1.1/users/show.json",
+	route: "users/show.json",
 	params: {
 		screen_name: {
 			required: true,
@@ -194,6 +203,7 @@ const USERSSHOW = {
 
 const CHECKLIMIT = {
 	url: "https://api.twitter.com/1.1/application/rate_limit_status.json",
+	route: "application/rate_limit_status.json",
 	params: {
 		resources: {
 			required: true,
