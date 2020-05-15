@@ -29,7 +29,7 @@ function Tweetur(user_credentials){
 	const keys = validateAndGetProperties(user_credentials)
 	this.app = keys || {}
 	this.oauth = getClient({ key: keys.consumer_key, secret: keys.consumer_secret })
-	this.bearer_token = 'AAAAAAAAAAAAAAAAAAAAABw%2B%2FQAAAAAArFi4znGFf6xNMO9FVlTIsTeiNU4%3D2UkX7XttQ6UVDIwkY9hA644y6zuavYaqvRrYKhFnAcXeaifiv7'
+	this.bearer_token = null
 }
 
 // ver 1.2.1 prototype structure
