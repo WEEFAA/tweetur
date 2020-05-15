@@ -1,5 +1,3 @@
-const oauthSignature = require('oauth-signature')
-
 // config/resource/assets
 const endpoints = require('./endpoints')
 const { TWEETUR_KEYS_SCHEMA } = require('./config')
