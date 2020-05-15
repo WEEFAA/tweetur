@@ -5,7 +5,7 @@ const crypto = require('crypto')
 // @utilities
 const { 
 	evaluateArgs, generateSignature, checkAuth,
-	checkParams, generateUrl, validateAndGetProperties
+	generateUrl, validateAndGetProperties
 } = require('./utils')
 // config
 const { TWEETUR_CREDENTIALS, SIGN_METHOD, OAUTH_VERSION } = require('./config')

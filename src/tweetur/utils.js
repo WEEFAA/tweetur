@@ -1,5 +1,4 @@
 // config/resource/assets
-const endpoints = require('./endpoints')
 const { TWEETUR_KEYS_SCHEMA } = require('./config')
 
 // @utilities for tweetur module
@@ -57,34 +56,6 @@ function evaluateArgs(args, opts = {}){
 	}
 	// return a boolean if the function is invoked with a callback
 	return hasCallback
-}
-
-function checkParams(endpoint, params){
-	// endpoint reference
-	const targetEndpoint = endpoints[endpoint]
-	const tParams = targetEndpoint.params
-	const tParamsList = Object.keys(tParams)
-	// check if passed key:value pairs are valid
-	for(let param of Object.keys(params)){
-		if(!tParamsList.includes(param)){
-			throw new ReferenceError(`Cannot find '${param}' on ${endpoint} parameters list`)
-		}
-	}
-	// check type and if required
-	for(let tweetur_param of Object.keys(tParams)){
-		if(tParams[tweetur_param].required && !params.hasOwnProperty(tweetur_param)){
-			throw new ReferenceError(`Tweetur param '${tweetur_param}' is required on this endpoint`)
-		}
-		if(params.hasOwnProperty(tweetur_param) 
-			&& !tParams[tweetur_param].type.split(',').includes(typeof params[tweetur_param])){
-			throw new TypeError(`Tweetur param '${tweetur_param}' must be type of: ${tParams[tweetur_param].type}`)
-		}else if(params.hasOwnProperty(tweetur_param)
-			&& tParams[tweetur_param].hasOwnProperty('array')
-			&& !tParams[tweetur_param].type.split(',').filter(type => type != "object").includes(typeof params[tweetur_param])
-			&& !Array.isArray(params[tweetur_param])){
-			throw new TypeError(`Tweetur param '${tweetur_param}' must be an array`)
-		}
-	}
 }
 
 function checkAuth(mode = "default", credentials = {}){
