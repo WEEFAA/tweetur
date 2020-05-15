@@ -290,41 +290,30 @@ Tweetur.prototype.checkLimit = function(params,callback){
 Tweetur.prototype.revoke = function(callback){
 	return new Promise((resolve, reject) => {
 		try{
+			const revokeUrl = "https://api.twitter.com/oauth2/invalidate_token"
+			// check if required parameters are passed
+			checkAuth(null, { access_token: this.bearer_token })
+			// test arguments
 			const evaluationOpts = {
 				allowFirstArgAsCallback: true,
 				credentials: { access_token: this.bearer_token }
 			}
 			const hasCallback = evaluateArgs(arguments,evaluationOpts)
-			// tested signature invocation
-			const timestamp = Math.round(Date.now() / 1000)
-			const url = "https://api.twitter.com/oauth2/invalidate_token",
-			parameters = {
-				oauth_consumer_key: this.credentials.consumer_key,
-				oauth_token: this.credentials.access_token,
-				oauth_nonce: btoa(this.credentials.consumer_key + ":" + timestamp),
-				oauth_timestamp: timestamp,
-				oauth_signature_method: "HMAC-SHA1",
-				oauth_version: "1.0",
-				access_token: this.bearer_token
-			},
-			method = "POST",
-			consumerSecret = this.credentials.consumer_secret,
-			token_secret = this.credentials.access_token_secret,
-			encodeSignature = true
-
-			const signature = oauthSignature.generate(method, url, parameters, consumerSecret, token_secret, { encodeSignature })
-			// authorization header
-			const authHeader = 'OAuth oauth_consumer_key="' + parameters.oauth_consumer_key + '", ' +
-		   	'oauth_nonce="' + parameters.oauth_nonce + '", ' +
-		   	'oauth_signature="' + signature + '", ' +
-		    'oauth_signature_method="' + parameters.oauth_signature_method + '", ' + 
-		    'oauth_timestamp="' + parameters.oauth_timestamp + '", ' +
-		    'oauth_token="' + parameters.oauth_token + '", ' + 
-		    'oauth_version="' + parameters.oauth_version + '"'
-			// request for to revoke access_token
-			request.post({
-				url: `${url}?access_token=${this.bearer_token}`,
-				headers:{ "Authorization": authHeader }
+			// app tokens
+			const tokens = {
+				key: this.app.access_token, 
+				secret: this.app.access_token_secret
+			}
+			// request data 
+			const request_data = {
+				method: 'POST',
+				url: revokeUrl + "?access_token=" + this.bearer_token
+			}
+			// request to revoke current access_token<bearer type>
+			const prev_bearer = this.bearer_token
+			request({
+				...request_data,
+				headers: this.oauth.toHeader(this.oauth.authorize(request_data, tokens))
 			},(err,response,body) => {
 				if(err){
 					if(hasCallback) return callback(err, {})
