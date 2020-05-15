@@ -382,8 +382,15 @@ Tweetur.prototype.api = function(endpoint, params = {}, callback){
 			// test args
 			const hasCallback = evaluateArgs(arguments)
 			this._request_api(endpoint, params, function(err,resp,body){
-				if(hasCallback) return callback(JSON.parse(body))
-				resolve(JSON.parse(body))
+				if(err){
+					// request error
+					if(hasCallback) return callback(err, {})
+					return reject(e)
+				}
+				const data = JSON.parse(body)
+				// return data
+				if(hasCallback) return callback(null, data)
+				return resolve(data)
 			})
 		}catch(e){
 			reject(e)
