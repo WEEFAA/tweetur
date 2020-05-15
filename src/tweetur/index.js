@@ -29,7 +29,7 @@ function Tweetur(user_credentials){
 	const keys = validateAndGetProperties(user_credentials)
 	this.app = keys || {}
 	this.oauth = getClient({ key: keys.consumer_key, secret: keys.consumer_secret })
-	this.bearer_token = null
+	this.bearer_token = 'AAAAAAAAAAAAAAAAAAAAABw%2B%2FQAAAAAArFi4znGFf6xNMO9FVlTIsTeiNU4%3D2UkX7XttQ6UVDIwkY9hA644y6zuavYaqvRrYKhFnAcXeaifiv7'
 }
 
 // ver 1.2.1 prototype structure
@@ -383,6 +383,7 @@ Tweetur.prototype.get = function(endpoint,params,cb){
 Tweetur.prototype.api = function(endpoint, params = {}, callback){
 	return new Promise((resolve, reject) => {
 		try{
+			const endsWithJSON = /.json$/
 			// check bearer token
 			checkAuth(null, { access_token: this.bearer_token })
 			// test args
@@ -393,7 +394,7 @@ Tweetur.prototype.api = function(endpoint, params = {}, callback){
 					if(hasCallback) return callback(err, {})
 					return reject(e)
 				}
-				const data = JSON.parse(body)
+				const data = endsWithJSON.test(endpoint) ? JSON.parse(body) : body
 				// return data
 				if(hasCallback) return callback(null, data)
 				return resolve(data)
@@ -407,7 +408,7 @@ Tweetur.prototype.api = function(endpoint, params = {}, callback){
 Tweetur.prototype._request_api = function(endpoint, params, callback){
 	// url information
 	const host = "twitter.com"
-	const { api_version, sub } = this.credentials
+	const { api_version, sub } = this.app
 	// request paramters
 	const query = qs.stringify(params, { arrayFormat: 'comma' })
 	const url = generateUrl(sub, host, api_version, endpoint) + "?" + query 
