@@ -13,8 +13,6 @@
   "author": "Ray Quijada <rayranilfu7o7@gmail.com> (http://twitter.com/rayranilweefa)",
   "license": "MIT",
   "dependencies": {
-    "btoa": "1.2.1",
-    "oauth-signature": "^1.5.0",
     "query-string": "^6.12.1",
     "request": "2.88.0"
   },
