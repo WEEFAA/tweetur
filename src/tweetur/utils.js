@@ -37,7 +37,8 @@ function evaluateArgs(args, opts = {}){
 			// check if passed parameter is valid according to its context
 			if(allowFirstArgAsCallback){ 
 				// in this case, first parameter should be the callback
-				if(typeof args[0] !== "function") throw callbackErr	
+				if(typeof args[0] !== "function") throw callbackErr
+				return hasCallback = true
 			}
 			if(eType !== "string" || endpoint === "") throw endpointErr
 			hasCallback = false
@@ -88,10 +89,10 @@ function checkParams(endpoint, params){
 
 function checkAuth(mode = "default", credentials = {}){
 	// check authentication state
+	const { consumer_key, consumer_secret, access_token, access_token_secret } = credentials 
 	switch(checkAuth){
 		case "credentials":
 			// check consumer_key & consumer_secret on authentication
-			const { consumer_key, consumer_secret, access_token, access_token_secret } = credentials 
 			const keyType = typeof consumer_key
 			const secretType = typeof consumer_secret
 			const aType = typeof access_token
@@ -103,7 +104,6 @@ function checkAuth(mode = "default", credentials = {}){
 			break
 		default: // auth required
 			// check access token
-			const { access_token } = credentials
 			if(!access_token || typeof access_token !== "string"){
 				throw new Error("Access Token Invalid")
 			}
