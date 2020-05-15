@@ -91,10 +91,13 @@ function checkAuth(mode = "default", credentials = {}){
 	switch(checkAuth){
 		case "credentials":
 			// check consumer_key & consumer_secret on authentication
-			const { consumer_key, consumer_secret } = credentials 
+			const { consumer_key, consumer_secret, access_token, access_token_secret } = credentials 
 			const keyType = typeof consumer_key
 			const secretType = typeof consumer_secret
-			if(!consumer_key || !consumer_secret || keyType !== "string" || secretType !== "string" ){
+			const aType = typeof access_token
+			const aSType = typeof access_token_secret
+			if(!consumer_key || !consumer_secret || !access_token || !access_token_secret || 
+				keyType !== "string" || secretType !== "string" || aType !== "string" || aSType !== "string"){
 				throw new Error("CREDENTIALS NOT VALID")
 			}
 			break
