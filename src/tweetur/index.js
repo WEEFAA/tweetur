@@ -1,23 +1,20 @@
 let request = require('request')
 let btoa = require("btoa")
-let qs = require('querystring')
+let qs = require('query-string')
 
 const oauthSignature = require('oauth-signature')
 // @utilities
-const { evaluateArgs, generateSignature, checkAuth, checkParams } = require('./utils')
+const { 
+	evaluateArgs, generateSignature, checkAuth,
+	checkParams, generateUrl, validateAndGetProperties
+} = require('./utils')
 // config
 const { TWEETUR_CREDENTIALS } = require('./config')
 
 
 function Tweetur(user_credentials){
-	// check if passed 'user_credentials' are valid
-	const user_credential_keys = Object.keys(user_credentials)
-	for(let credential of Object.keys(TWEETUR_CREDENTIALS)){
-		if( !user_credential_keys.includes(credential) || typeof user_credentials[credential] !== TWEETUR_CREDENTIALS[credential]){
-			throw new Error(`Credential: ${credential} is required and must have a type of ${TWEETUR_CREDENTIALS[credential]}`)
-		}
-	}
-	this.credentials = user_credentials || {}
+	const properties = validateAndGetProperties(user_credentials)
+	this.credentials = properties || {}
 	this.bearer_token = null
 	this.basic_token = ""
 }
@@ -374,6 +371,38 @@ Tweetur.prototype.get = function(endpoint,params,cb){
 		qs:params
 	},(err,response,body) => {
 		cb(err,response,body)
+	})
+}
+
+Tweetur.prototype.api = function(endpoint, params = {}, callback){
+	return new Promise((resolve, reject) => {
+		try{
+			// check bearer token
+			checkAuth(null, { access_token: this.bearer_token })
+			// test args
+			const hasCallback = evaluateArgs(arguments)
+			this._request_api(endpoint, params, function(err,resp,body){
+				if(hasCallback) return callback(JSON.parse(body))
+				resolve(JSON.parse(body))
+			})
+		}catch(e){
+			reject(e)
+		}
+	})
+}
+
+Tweetur.prototype._request_api = function(endpoint, params, callback){
+	// url information
+	const host = "twitter.com"
+	const { api_version, sub } = this.credentials
+	// request paramters
+	const query = qs.stringify(params, { arrayFormat: 'comma' })
+	const url = generateUrl(sub, host, api_version, endpoint) + "?" + query 
+	const headers = { "Authorization": "Bearer " + this.bearer_token }
+	// make a request to Twitter API 
+	// including access_token<bearer> on request header as Bearer
+	request({ url, headers },(err,response,body) => {
+		callback(err,response,body)
 	})
 }
 
