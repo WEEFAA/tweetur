@@ -1,7 +1,8 @@
 const oauthSignature = require('oauth-signature')
 
-// endpoints info
+// config/resource/assets
 const endpoints = require('./endpoints')
+const { TWEETUR_KEYS_SCHEMA } = require('./config')
 
 // @utilities for tweetur module
 
@@ -9,55 +10,51 @@ function evaluateArgs(args, opts = {}){
 	let hasCallback = true
 	const { allowFirstArgAsCallback = false } = opts
 	// errors
-	const callbackErr = new TypeError("Invalid callback function")
-	const paramsErr = new TypeError("Invalid parameter, it must be an object that contains key:value pair that defines each parameter on this endpoint")
-	// check if the callback is omitted 
+	const callbackErr = new TypeError("Expects callback function<function>")
+	const paramsErr = new TypeError("Expects parameter as an object<object> containing key:value pairs defined on twitter documentation")
+	const endpointErr = new TypeError("Expects first parameter as a endpoint<string:not_null>!")
+	// expected parameters
+	const [endpoint, params, callback] = args
+	const eType = typeof endpoint 
+	const pType = typeof params
+	const cType = typeof callback
 	switch(args.length){
+		case 3:
+			// fn(endpoint, params, callback)
+			// check all parameters type 
+			if(eType !== "string" || endpoint === "") throw endpointErr
+			if(pType !== "object" || Array.isArray(params)) throw paramsErr
+			if(cType !== "function") throw callbackErr
+			break
 		case 2: 
-			// fn(params, callback){...}
-			const [params, callback] = args
-			//check if params is a valid object and callback is a valid function
-			const pType = typeof params 
-			const cType = typeof callback
-			if( (pType !== "object" || Array.isArray(params) )){
-				throw paramsErr
-			}
-			if(cType !== "function"){
-				throw callbackErr
-			}
+			// fn(endpoint, params){...}
+			// check if endpoint and params are valid according to desired types
+			if(eType !== "string" || endpoint === "") throw endpointErr
+			if(pType !== "object" || Array.isArray(params)) throw paramsErr
+			// no callback
+			hasCallback = false
 			break
 		case 1:
-			if(allowFirstArgAsCallback){
-				// fn(callback){...}
-				const [callback] = args 
-				const cType = typeof callback 
-				// check if callback is a valid function
-				if(cType !== "function"){
-					throw callbackErr
-				}
-			}else{
-				// fn(params){...}
-				const [params] = args 
-				// callback omitted, first argument is the parameters
-				// check if it's a valid object
-				const pType = typeof params
-				if(pType !== "object" || Array.isArray(params)){
-					throw paramsErr 
-				}
-				hasCallback = false
+			// fn(callback){...} OR fn(endpoint) 
+			// check if passed parameter is valid according to its context
+			if(allowFirstArgAsCallback){ 
+				// in this case, first parameter should be the callback
+				if(typeof args[0] !== "function") throw callbackErr	
 			}
+			if(eType !== "string" || endpoint === "") throw endpointErr
+			hasCallback = false
 			break
 		case 0:
 			if(allowFirstArgAsCallback){
-				// this indicates that callback is optional
+				// unique to some methods, optional callback i.e. authenticating
 				hasCallback = false
 				break
 			}
 			// otherwise, this is not allowed
-			throw new SyntaxError("Parameter is required")
+			throw new SyntaxError("Expects at least 1 parameter<string:endpoint>")
 			break
 		default:
-			throw new SyntaxError("Expects 1 or 2 passed parameter")
+			throw new SyntaxError("Unexpected length of passed parameters")
 	}
 	// return a boolean if the function is invoked with a callback
 	return hasCallback
@@ -124,7 +121,52 @@ function generateSignature(opt){
 	return oauthSignature.generate(method, url, parameters, consumer_secret, token_secret)
 }
 
+function generateUrl(sub, host, api_version, endpoint){
+	// check if given endpoint does not contain '/' prefix
+	if(!/^\//.test(endpoint)){
+		api_version = api_version + "/" // add '/' prefix
+	}
+
+	return encodeURI("https://" + sub + "." + host + "/" + api_version + endpoint)
+}
+
+function validateAndGetProperties(keys = {}){
+	//if 'keys' is an array, reject
+	if(Array.isArray(keys)) throw new Error("Expects an object<object> as a parameter")
+	// check each tweetur property
+	const tweetur_keys = Object.keys(TWEETUR_KEYS_SCHEMA)
+	for(let tweetur_property of tweetur_keys){
+		const tweetur_property_type = TWEETUR_KEYS_SCHEMA[tweetur_property].type
+		const regexp  = TWEETUR_KEYS_SCHEMA[tweetur_property].regexp
+		if(TWEETUR_KEYS_SCHEMA[tweetur_property].required){
+			if(!keys.hasOwnProperty(tweetur_property) 
+			&& typeof keys[tweetur_property] !== tweetur_property_type){
+				throw new Error("Expects key of '"+ tweetur_property +"' with type of <"+ tweetur_property_type +">")
+			}else if(keys.hasOwnProperty(tweetur_property) && regexp
+			&& !regexp.test(keys[tweetur_property])){
+				throw new Error("Invalid value of '" + tweetur_property + "'")
+			}
+		}else{
+			if(keys.hasOwnProperty(tweetur_property) 
+			&& typeof keys[tweetur_property] !== tweetur_property_type){
+				throw new Error("Expects key of '"+ tweetur_property +"' with type of <"+ tweetur_property_type +">")
+			}else if(keys.hasOwnProperty(tweetur_property) && !regexp.test(keys[tweetur_property])){
+				throw new Error("Invalid value of '" + tweetur_property + "'") 
+			}else{
+				// if property is defined, don't set to default
+				if(keys.hasOwnProperty(tweetur_property)) continue
+				// set default values for optional properties
+				keys[tweetur_property] = TWEETUR_KEYS_SCHEMA[tweetur_property].default
+			}
+		}
+	}
+	// updated properties
+	return keys
+}
+
 exports.generateSignature = generateSignature
 exports.evaluateArgs = evaluateArgs
 exports.checkAuth = checkAuth
 exports.checkParams = checkParams
+exports.generateUrl = generateUrl
+exports.validateAndGetProperties = validateAndGetProperties
