@@ -1,3 +1,5 @@
+exports.SIGN_METHOD ="HMAC-SHA1"
+exports.OAUTH_VERSION = '1.0'
 
 // parameters for instancing Tweetur Class
 // credential: <type>

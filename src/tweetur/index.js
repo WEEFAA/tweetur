@@ -1,24 +1,36 @@
-let request = require('request')
-let btoa = require("btoa")
-let qs = require('query-string')
-
-const oauthSignature = require('oauth-signature')
+const request = require('request')
+const qs = require('query-string')
+const OAuth = require('oauth-1.0a')
+const crypto = require('crypto')
 // @utilities
 const { 
 	evaluateArgs, generateSignature, checkAuth,
 	checkParams, generateUrl, validateAndGetProperties
 } = require('./utils')
 // config
-const { TWEETUR_CREDENTIALS } = require('./config')
+const { TWEETUR_CREDENTIALS, SIGN_METHOD, OAUTH_VERSION } = require('./config')
+
+// OAuth Client generator
+function getClient(credentials){
+	return OAuth({
+		version: OAUTH_VERSION,
+		consumer: { ...credentials }, // TWITTER APP KEYS
+		signature_method: SIGN_METHOD, // TWITTER SIGN METHOD
+		hash_function(base_string, key){
+			return crypto.createHmac('sha1', key)
+				.update(base_string)
+				.digest('base64')
+		}
+	})
+}
 
 
 function Tweetur(user_credentials){
-	const properties = validateAndGetProperties(user_credentials)
-	this.credentials = properties || {}
+	const keys = validateAndGetProperties(user_credentials)
+	this.app = keys || {}
+	this.oauth = getClient({ key: keys.consumer_key, secret: keys.consumer_secret })
 	this.bearer_token = null
-	this.basic_token = ""
 }
-
 
 // ver 1.2.1 prototype structure
 
@@ -26,27 +38,32 @@ Tweetur.prototype.authenticate = function(callback){
 	return new Promise((resolve, reject) => {
 		try{
 			// check auth credentials
-			checkAuth("credentials", { ...this.credentials })
+			checkAuth("credentials", { ...this.app })
 			// test args
 			const evaluationOpts = { allowFirstArgAsCallback: true }
 			const hasCallback = evaluateArgs(arguments, evaluationOpts)
-			// create a basic token 
-			this.basic_token = btoa(this.credentials.consumer_key+":"+ this.credentials.consumer_secret)
+			// generate basic token using Buffer
+			const { consumer_key, consumer_secret } = this.app 
+			const basic_token = Buffer.from(consumer_key + ":" + consumer_secret).toString('base64')
+			// request data 
+			const request_data = {
+				method: "POST",
+				url: "https://api.twitter.com/oauth2/token", // auth url 
+				body: "grant_type=client_credentials",
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+					authorization: 'Basic ' + basic_token 
+				}
+			}
+			// execute request, auythenticate.
 			// request for a bearer token
-			request.post({
-				url:"https://api.twitter.com/oauth2/token",
-				headers:{
-					"Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-					"Authorization": "Basic " + this.basic_token
-				},
-				body: "grant_type=client_credentials"
-			}, (err,response,body) => {
+			request.post(request_data, (err,response,body) => {
 				if(err){
 					if(hasCallback) return callback(err, {})
 					return reject(err)
 				}
 				let data = JSON.parse(body) // parse data
-				// set instance access_token
+				// bind access_token
 				this.bearer_token = data.access_token 
 				// return data through calling callback or return a promise
 				if(hasCallback) return callback(null, data)
