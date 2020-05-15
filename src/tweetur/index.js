@@ -159,30 +159,4 @@ Tweetur.prototype._request_api = function(endpoint, params, callback){
 	})
 }
 
-
-Tweetur.prototype._handler = function(err,statusCode,errCallback){
-	if(err != null){
-		return errCallback(true,err)
-	}
-
-	switch(statusCode){
-		case 400:
-			errCallback(true,"SOMETHING WENT WRONG")
-			break
-		case 404:
-			errCallback(true,"NOT FOUND")
-			break
-		case 403:
-			errCallback(true,"FORBIDDEN")
-			break
-		case 200:
-			errCallback(false,"STATUS OK!")
-			break
-		default:
-			errCallback(true,statusCode)
-	}
-}
-
-
-
 module.exports = Tweetur
