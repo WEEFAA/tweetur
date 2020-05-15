@@ -20,5 +20,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/WEEFAA/tweetur"
+  },
+  "devDependencies": {
+    "jest": "^26.0.1"
   }
 }
