@@ -13,6 +13,7 @@
   "author": "Ray Quijada <rayranilfu7o7@gmail.com> (http://twitter.com/rayranilweefa)",
   "license": "MIT",
   "dependencies": {
+    "oauth-1.0a": "^2.2.6",
     "query-string": "^6.12.1",
     "request": "2.88.0"
   },
