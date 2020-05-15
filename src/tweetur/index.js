@@ -4,8 +4,7 @@ const OAuth = require('oauth-1.0a')
 const crypto = require('crypto')
 // @utilities
 const { 
-	evaluateArgs, generateSignature, checkAuth,
-	generateUrl, validateAndGetProperties
+	evaluateArgs, checkAuth, generateUrl, validateAndGetProperties
 } = require('./utils')
 // config
 const { TWEETUR_CREDENTIALS, SIGN_METHOD, OAUTH_VERSION } = require('./config')

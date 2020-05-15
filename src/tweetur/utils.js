@@ -81,18 +81,6 @@ function checkAuth(mode = "default", credentials = {}){
 	}
 }
 
-function generateSignature(opt){
-	const {
-		method = 'POST', 
-		url = "",
-		parameters = {},
-		consumer_secret = "", // consumer_secret
-		token_secret = "" // access_token_secret
-	} = opt 
-	console.log(opt)
-	return oauthSignature.generate(method, url, parameters, consumer_secret, token_secret)
-}
-
 function generateUrl(sub, host, api_version, endpoint){
 	// check if given endpoint does not contain '/' prefix
 	if(!/^\//.test(endpoint)){
@@ -136,9 +124,7 @@ function validateAndGetProperties(keys = {}){
 	return keys
 }
 
-exports.generateSignature = generateSignature
 exports.evaluateArgs = evaluateArgs
 exports.checkAuth = checkAuth
-exports.checkParams = checkParams
 exports.generateUrl = generateUrl
 exports.validateAndGetProperties = validateAndGetProperties
