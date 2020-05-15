@@ -1,5 +1,4 @@
 const Tweetur = require('./src/tweetur')
-const oauthSignature = require('oauth-signature')
 
 const keys = {
 	consumer_key: "mPASZqPi3m0HLcA6pdPefjSki",
@@ -9,11 +8,12 @@ const keys = {
 }
 
 const me = new Tweetur(keys)
+console.log(me)
 ;(async function(){
 	try{
-		const result = await me.authenticate()
-		const res = await me.api("application/rate_limit_status.json", { resources: ['statuses', 'friends']})
-		console.log(res)
+		await me.authenticate()
+		const result = await me.revoke() 
+		console.log(result)
 	}catch(e){
 		console.error(e)
 	}
