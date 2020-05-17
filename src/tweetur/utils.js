@@ -61,7 +61,7 @@ function evaluateArgs(args, opts = {}){
 function checkAuth(mode = "default", app = {}){
 	// check authentication state
 	const { consumer_key, consumer_secret, access_token, access_token_secret, bearer_token } = app 
-	switch(checkAuth){
+	switch(mode){
 		case "credentials":
 			// check consumer_key & consumer_secret on authentication
 			const keyType = typeof consumer_key
@@ -109,9 +109,7 @@ function validateAndGetProperties(keys = {}){
 				continue
 			}
 		}else{
-			if(keys.hasOwnProperty(tweetur_property)){
-				throw new ReferenceError("Expects key of '"+ tweetur_property +"' with type of <"+ tweetur_property_type +">")
-			}else if(typeof keys[tweetur_property] !== tweetur_property_type){
+			if(typeof keys[tweetur_property] !== tweetur_property_type){
 				throw new TypeError("Expects key of '"+ tweetur_property +"' with type of <"+ tweetur_property_type +">")
 			}else if(keys.hasOwnProperty(tweetur_property) && !regexp.test(keys[tweetur_property])){
 				throw new Error("Invalid value of '" + tweetur_property + "'") 
