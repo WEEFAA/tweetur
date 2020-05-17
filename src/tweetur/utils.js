@@ -76,7 +76,7 @@ function checkAuth(mode = "default", app = {}){
 		default: // auth required
 			// check access token
 			if(!bearer_token || typeof bearer_token !== "string"){
-				throw new Error("Access Token Invalid")
+				throw new Error("Bearer Token Invalid")
 			}
 	}
 }
