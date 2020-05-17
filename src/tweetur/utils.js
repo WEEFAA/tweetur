@@ -92,24 +92,27 @@ function generateUrl(sub, host, api_version, endpoint){
 
 function validateAndGetProperties(keys = {}){
 	//if 'keys' is an array, reject
-	if(Array.isArray(keys)) throw new Error("Expects an object<object> as a parameter")
+	if(Array.isArray(keys) || typeof keys !== "object") throw new Error("Expects an object<object> as a parameter")
 	// check each tweetur property
 	const tweetur_keys = Object.keys(TWEETUR_KEYS_SCHEMA)
 	for(let tweetur_property of tweetur_keys){
 		const tweetur_property_type = TWEETUR_KEYS_SCHEMA[tweetur_property].type
 		const regexp  = TWEETUR_KEYS_SCHEMA[tweetur_property].regexp
 		if(TWEETUR_KEYS_SCHEMA[tweetur_property].required){
-			if(!keys.hasOwnProperty(tweetur_property) 
-			&& typeof keys[tweetur_property] !== tweetur_property_type){
-				throw new Error("Expects key of '"+ tweetur_property +"' with type of <"+ tweetur_property_type +">")
-			}else if(keys.hasOwnProperty(tweetur_property) && regexp
-			&& !regexp.test(keys[tweetur_property])){
+			if(!keys.hasOwnProperty(tweetur_property)){
+				throw new ReferenceError("Expects key of '"+ tweetur_property +"' with type of <"+ tweetur_property_type +">")
+			}else if(typeof keys[tweetur_property] !== tweetur_property_type){
+				throw new TypeError("Expects key of '"+ tweetur_property +"' with type of <"+ tweetur_property_type +">")
+			}else if(regexp && !regexp.test(keys[tweetur_property])){
 				throw new Error("Invalid value of '" + tweetur_property + "'")
+			}else{
+				continue
 			}
 		}else{
-			if(keys.hasOwnProperty(tweetur_property) 
-			&& typeof keys[tweetur_property] !== tweetur_property_type){
-				throw new Error("Expects key of '"+ tweetur_property +"' with type of <"+ tweetur_property_type +">")
+			if(keys.hasOwnProperty(tweetur_property)){
+				throw new ReferenceError("Expects key of '"+ tweetur_property +"' with type of <"+ tweetur_property_type +">")
+			}else if(typeof keys[tweetur_property] !== tweetur_property_type){
+				throw new TypeError("Expects key of '"+ tweetur_property +"' with type of <"+ tweetur_property_type +">")
 			}else if(keys.hasOwnProperty(tweetur_property) && !regexp.test(keys[tweetur_property])){
 				throw new Error("Invalid value of '" + tweetur_property + "'") 
 			}else{
