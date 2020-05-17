@@ -17,7 +17,7 @@ and basic authentication with the help of this module
 	npm install tweetur --save
 ```
 
-## TWEETUR VERSION v2: WHAT'S NEW?
+## TWEETUR v2: WHAT'S NEW?
 
 - Tweetur now supports Promises! [callbacks are still supported]
 - Supports all API endpoints on Application-Only scope
@@ -25,12 +25,13 @@ and basic authentication with the help of this module
 - New invocation scheme
 - Added more helpful error messages and validators
 - Fixed bugs from previous version(1.2.4)
+- Added integration and unit testing
 
 ## USAGE 
 
 Tweetur v2 introduce new configurations to your application.
 Tweetur accepts an object containing your twitter application credentials, these are necessary to 
-identify your application. You have to keep in mind that you must not expose your keys 
+identify your application. You have to keep in mind that you should not expose your keys 
 publicly and store them somewhere safe such as environment variables.
 
 ```javascript
@@ -43,8 +44,8 @@ publicly and store them somewhere safe such as environment variables.
 		consumer_secret: "*******", // required **
 		access_token: "*******", // required **
 		access_token_secret: "*******", // required **
-		sub: "", // optional > defaults  to 'api' 
-		api_version: '' // optional > defaults to '1.1'
+		sub: "api", // optional > defaults  to 'api' 
+		api_version: '1.1' // optional > defaults to '1.1'
 	}) 
 ```
 TIP: All 'required' fields can be obtained on twitter's 
@@ -57,6 +58,7 @@ There are two ways to authenticate your app get your Access Token or [bearer_tok
 1. Authentication using Promises in two different approach. 
 
 ```javascript 
+	// first approach
 	// use of chaining. then/catch
 	app.authenticate().then(function(data){
 		// data will contain your access_token
@@ -64,7 +66,7 @@ There are two ways to authenticate your app get your Access Token or [bearer_tok
 
 		//.... do some api requests here
 	})
-
+	// second approach
 	// use of async/await.
 	async function init(){
 		const data = await app.authenticate()
@@ -77,7 +79,7 @@ There are two ways to authenticate your app get your Access Token or [bearer_tok
 
 ```
 
-2. Authentication using callback. You can pass in a callback as first parameter in the authenticate method. 
+2. Authentication using a callback. You can pass in a callback as first parameter in the authenticate method. 
 
 ```javascript
 	app.authenticate(function(err,data){
@@ -90,7 +92,7 @@ After completing the authentication process of your app, calling your favourite 
 
 ## EXAMPLES
 
-There are lots of different api endpoints that twitter provides, see [users/show](https://developer.twitter.com/en/docs/accounts-and-users/follow-search-get-users/api-reference/get-users-show) as an example using the **get** method of app. This endpoint allow you to search for an specific user by supplying his/her 'screen_name' or 'user_id' as parameter. Calling this endpoint will return a [user-object](https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/user-object) that contains information about the user. See [users/show](https://developer.twitter.com/en/docs/accounts-and-users/follow-search-get-users/api-reference/get-users-show) endpoint for more information about its parameters.
+There are lots of different api endpoints that twitter provides, see [users/show](https://developer.twitter.com/en/docs/accounts-and-users/follow-search-get-users/api-reference/get-users-show) as will use this as an example using the **get** method of app. This endpoint allow you to search for an specific user by supplying *twitter user* **screen_name** or **user_id**as parameter to **get** method. Calling this endpoint will return a [user-object](https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/user-object) that contains information about the user. See [users/show](https://developer.twitter.com/en/docs/accounts-and-users/follow-search-get-users/api-reference/get-users-show) endpoint for more information about its parameters.
 
 ```javascript 
 	const app = new Tweetur(<my_config>)
@@ -108,13 +110,13 @@ There are lots of different api endpoints that twitter provides, see [users/show
 	init()
 ```
 
-On the example above, we call 'authenticate' method to authenticate our app and then call 'users/show.json' endpoint. Notice that there's a '.json' extension on the passed paramter, it is because twitter defined it like that to distinguish which type of data they should return to the request. 
+On the example above, we called 'authenticate' method to authenticate our app and then call 'users/show.json' endpoint with Tweetur **get** method. Notice that there's a '.json' extension on the endpoint parameter, it is because twitter defined it like that to distinguish what type of data to return as the response to the request. 
 
 NOTE: Not appending '.json' extension on the endpoint will not throw an error, Tweetur will try to return the fetched data as it is. 
 
-TIP: Always check the URL of the endpoint you're calling, most of Twitter endpoints follows this convention.
+>Always check the URL of the endpoint you're calling, most of Twitter endpoints follows this convention.
 
-You can achieve the same request above without using promises, through 'callbacks'. However, using callbacks is highly discourage to avoid convoluted codes that are hard to follow and debug if there are multiple requests after requests also known as callback hell. To use callbacks, you could pass in a callback function as a third parameter.
+You can achieve the same request above without using promises through 'callbacks'. However, using callbacks is highly discourage to avoid convoluted codes that are hard to follow and debug if there are multiple requests after requests also known as callback hell. To use callbacks, you could pass in a callback function as a third parameter.
 
 ```javascript
 		const app = new Tweetur(<my_config>)
@@ -141,13 +143,13 @@ You can achieve the same request above without using promises, through 'callback
 
 ## PARAMETERS: '**get**' Tweetur method
 
-position | name | type | required | description
+position | name | type | isRequired | description
 --- | --- | --- | --- | ----
-`first` | *endpoint* | string** | **required** | [Resource endpoint](https://developer.twitter.com/en/docs/api-reference-index)
+`first` | *endpoint* | string | **required** | check at [Resource endpoint](https://developer.twitter.com/en/docs/api-reference-index)
 `second` | *parameters* | object | **required** | Parameters passed to the request
 `third` | *callback* | function | **optional** | Callback function, returns a promise if omitted 
 
-Endpoint is just a string representing the resource that you want fetch (e.g. users/show.json, followers/list.json). Tweetur will automatically add or omit a '/' prefix based on the passed endpoint (i.e /users/show.json), Tweetur will omit prefixing a '/' to the url to avoid 'not found' errors. 
+Endpoint is just a string representing the resource that you want fetch (e.g. users/show.json, followers/list.json). Tweetur will automatically add or omit '/' prefix depending on the passed endpoint (i.e /users/show.json), Tweetur will omit prefixing '/' to the url to avoid 'not found' errors. 
 
 ## INVOCATION SCHEME: Tweetur methods
 ```javascript
@@ -189,7 +191,7 @@ There are times that you might want to invalidate your access_token to prevent s
 
 
 ## v1.2.4 METHODS DEPRECATION NOTICE
-Tweetur endpoint helper methods are deprecated in v2. As a replace for this methods, **get** method is introduced to support numbers of endpoint without the need to update the Tweetur module every point in time. 
+Tweetur endpoint helper methods are deprecated in Tweetur v2. As a replace for this methods, **get** method is introduced to support numbers of endpoint without the need to update the Tweetur module. 
 
 > i.e. userTimeline, usersLookUp, checkLimit, friendsIds, etc.
 
@@ -197,5 +199,5 @@ Tweetur endpoint helper methods are deprecated in v2. As a replace for this meth
 [API REFERENCE INDEX](https://developer.twitter.com/en/docs/api-reference-index)
 
 ## ISSUES
-Please submit your issues to github repository.
+Please submit your issues to Tweetur's github repository.
 
