@@ -1,8 +1,8 @@
-# TWEETUR for application-only authentication
+# TWEETUR for application-only authentication with TWITTER
 
 A simplified request to interact with Twitter API
 
-# USE 
+## MUST KNOW! 
 
 To interact with twitter API with simple functionalities 
 and basic authentication with the help of this module
@@ -11,108 +11,193 @@ and basic authentication with the help of this module
 
 **Disclaimer: Application-only Authentication supports limited endpoints**
 
-# Installation
+## INSTALLATION
 
 ```npm
 	npm install tweetur --save
 ```
 
+## TWEETUR v2: WHAT'S NEW?
 
-# Usage 
+- Tweetur now supports Promises! [callbacks are still supported]
+- Supports all API endpoints on Application-Only scope
+- Tweetur helper methods are deprecated. (i.e. userTimeline, followersList)
+- New invocation scheme
+- Added more helpful error messages and validators
+- Fixed bugs from previous version(1.2.4)
+- Added integration and unit testing
+
+## USAGE 
+
+Tweetur v2 introduce new configurations to your application.
+Tweetur accepts an object containing your twitter application credentials, these are necessary to 
+identify your application. You have to keep in mind that you should not expose your keys 
+publicly and store them somewhere safe such as environment variables.
 
 ```javascript
 	const Tweetur = require('tweetur') //
 
 	//initialize the Tweetur object...
 	//along with your keys
-	const me = new Tweetur({
-		consumer_key : "xxxxxxxx", // required **
-		consumer_secret: "xxxxxxx" // required **
+	const app = new Tweetur({
+		consumer_key : "*******", // required **
+		consumer_secret: "*******", // required **
+		access_token: "*******", // required **
+		access_token_secret: "*******", // required **
+		sub: "api", // optional > defaults  to 'api' 
+		api_version: '1.1' // optional > defaults to '1.1'
 	}) 
 ```
-consumer_key and consumer_secret are needed to make Tweetur work,
-you can get you keys in your developer account dashboard at [twitter](https://dev.twitter.com)
+TIP: All 'required' fields can be obtained on twitter's 
+[developer](https://developer.twitter.com/en/apps) platform. 
 
-**once you construct the Tweetur object you can now use methods in this package**
+## AUTHENTICATE
 
-### Authenticate
+There are two ways to authenticate your app get your Access Token or [bearer_token](https://developer.twitter.com/en/docs/basics/authentication/oauth-2-0) to access Twitter API endpoints. Authenticating your app before calling endpoints is necessary, otherwise you'll get unexpected errors.
+
+1. Authentication using Promises in two different approach. 
 
 ```javascript 
-	me.authenticate(function(err,response,body){
+	// first approach
+	// use of chaining. then/catch
+	app.authenticate().then(function(data){
+		// data will contain your access_token
+		// { access_token: '<bearer type>' }
 
-	if(err){
-		console.error(err)
+		//.... do some api requests here
+	})
+	// second approach
+	// use of async/await.
+	async function init(){
+		const data = await app.authenticate()
+		// data contains access_token <bearer_type>
+
+		//... do some api requests here
 	}
 
-	console.log(JSON.parse(body))
-	//access_token received 
-	//token_type 'bearer'
+	init() // dont forget to call this
+
+```
+
+2. Authentication using a callback. You can pass in a callback as first parameter in the authenticate method. 
+
+```javascript
+	app.authenticate(function(err,data){
+		if(err) throw err 
+		//... do some api requests here
 	})
 ```
 
-### Authenticate
-authenticate method is used to to authenticate your credentials with twitter
-and the response body of this request would contain the access_token...
-you are good to go now
+After completing the authentication process of your app, calling your favourite endpoints are now just a few lines of code away!
 
-# Methods
-List of all the methods covered...
+## EXAMPLES
 
-Please refer to the twitter parameter for more information about parameters,
-parameters can be ommitted in some methods but most of the time 
-parameters are required and callback is required
-
-#### Note: params should always be an object
+There are lots of different api endpoints that twitter provides, see [users/show](https://developer.twitter.com/en/docs/accounts-and-users/follow-search-get-users/api-reference/get-users-show) as will use this as an example using the **get** method of app. This endpoint allow you to search for an specific user by supplying *twitter user* **screen_name** or **user_id**as parameter to **get** method. Calling this endpoint will return a [user-object](https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/user-object) that contains information about the user. See [users/show](https://developer.twitter.com/en/docs/accounts-and-users/follow-search-get-users/api-reference/get-users-show) endpoint for more information about its parameters.
 
 ```javascript 
-	//tweetur class methods
-	userTimeline(params,callback) // returns timeline status of specified user
-	followersList(params,callback) // returns list of your followers
-	friendsList(params,callback) // returns a list of people you are following
-	followersIds(params,callback) // same as followersList but ids are returned instead
-	friendsIds(params,callback) // same as friendsList but ids are returned instead
-	userShow(params,callback) // looks for a user 
-	usersLookUp({screen_name:[ids]},callback) // looks up for couple of users
-	
+	const app = new Tweetur(<my_config>)
+	// authenticate
+	async function init(){
+		await app.authenticate() 
+		// in this example, we'll search for user that have a screen_name of 'twitterdev'
+		const target_user = 'twitterdev'
+		const twitter_dev = await app.get('users/show.json', { screen_name: target_user })
+		// this contains the data about the twitter account associated to @twitterdev
+		console.log(twitter_dev)
+		// call more endpoints here!
+	}
 
-	//extras
-	checkLimit(params,callback) //checks the limit for your endpoints
-	revoke(callback) //revoke your access_token
-	authenticate(callback) //authenticate your credentials
-
-	//DEPRECATED
-	usersSuggestions(params,callback) // list of suggestion of users
+	init()
 ```
 
+On the example above, we called 'authenticate' method to authenticate our app and then call 'users/show.json' endpoint with Tweetur **get** method. Notice that there's a '.json' extension on the endpoint parameter, it is because twitter defined it like that to distinguish what type of data to return as the response to the request. 
 
-# EXAMPLE
+NOTE: Not appending '.json' extension on the endpoint will not throw an error, Tweetur will try to return the fetched data as it is. 
 
-userTimeline method is used to get a user timeline by specifying some 
-parameter that you can look up at the [statuses/user_timeline](https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline) endpoint.
+>Always check the URL of the endpoint you're calling, most of Twitter endpoints follows this convention.
 
-```javascript 
-	//access_token received
-	//token_type 'bearer'
+You can achieve the same request above without using promises through 'callbacks'. However, using callbacks is highly discourage to avoid convoluted codes that are hard to follow and debug if there are multiple requests after requests also known as callback hell. To use callbacks, you could pass in a callback function as a third parameter.
 
-	me.userTimeline({screen_name:'rayranilweefa',count:1},function(err,response,body){
-		if(err){
-			return console.error(err)
-		}
-
-		console.log(JSON.parse(body))
-		//user timeline data
-	})
-
+```javascript
+		const app = new Tweetur(<my_config>)
+		// authenticate your app
+		app.authenticate(function(){
+			// in this example, we'll search for user that have a screen_name of 'twitterdev'
+			const target_user = 'twitterdev'
+			app.get('users/show.json', { screen_name: target_user }, function(err,twitter_dev){
+				// throw error if there is.
+				if(err) throw err 
+				// this contains the data about the twitter account associated to @twitterdev
+				console.log(twitter_dev)
+				// ofcourse, you can still call more endpoints here
+				// this time, we'll get information about the followers of our target user
+				app.get('followers/list.json', { screen_name: target_user }, function(err,data){
+					if(err) throw err 
+					console.log(data)
+				})
+			})
+		}) 
 ```
 
-in this example screen_name and count parameters are specified 
-hence it will only return a one tweet status of the screen_name parameter
+>This is just a simple example of a nested request using callbacks. You must know that when a callback is not passed, 'get' method will return a promise instead. 
 
+## PARAMETERS: '**get**' Tweetur method
+
+position | name | type | isRequired | description
+--- | --- | --- | --- | ----
+`first` | *endpoint* | string | **required** | check at [Resource endpoint](https://developer.twitter.com/en/docs/api-reference-index)
+`second` | *parameters* | object | **required** | Parameters passed to the request
+`third` | *callback* | function | **optional** | Callback function, returns a promise if omitted 
+
+Endpoint is just a string representing the resource that you want fetch (e.g. users/show.json, followers/list.json). Tweetur will automatically add or omit '/' prefix depending on the passed endpoint (i.e /users/show.json), Tweetur will omit prefixing '/' to the url to avoid 'not found' errors. 
+
+## INVOCATION SCHEME: Tweetur methods
+```javascript
+	// reference
+	const app = new Tweetur(<my_config>)
+```
+
+method | scheme | note
+--- | --- | ---
+`authenticate` | app.authenticate(callback) | callback is optional, returns a promise if omitted
+`get` | app.get(endpoint, params, callback) | see above for information about **get** method 
+`revoke` | app.revoke(callback) | callback is optional, returns a promise if omitted
+
+
+## REVOKING APP ACCESS_TOKEN <BEARER>
+
+There are times that you might want to invalidate your access_token to prevent someone from using your access_token on your behalf or implement a security measure for your application. Tweetur provides a *revoke* method bound to your app instance to revoke your token. Doing this will invalidate your future requests to any of twitter endpoint available in **get** method. In order to execute request, you must authenticate your app again to proceed. 
+
+```javascript
+	const app = new Tweetur(<my_config>)
+	async function init(){
+		await app.authenticate()
+		// this is still valid
+		const peeps = await app.get('friends/ids.json', { screen_name: 'twitterdev' })
+		console.log(peeps)
+		// revoking app access_token
+		await app.revoke()
+		// calling 'get' method on any endpoints after revoking access_token
+		// will throw an error
+		app.get('friends/list.json', { screen_name: 'twitterdev'}).then(function(data){
+			// this will not trigger 
+		}).catch(function(err){
+			console.error(err) 
+		})
+	}
+
+	init()
+``` 
+
+
+## v1.2.4 METHODS DEPRECATION NOTICE
+Tweetur endpoint helper methods are deprecated in Tweetur v2. As a replace for this methods, **get** method is introduced to support numbers of endpoint without the need to update the Tweetur module. 
+
+> i.e. userTimeline, usersLookUp, checkLimit, friendsIds, etc.
 
 # FIND YOUR ENDPOINT HERE
 [API REFERENCE INDEX](https://developer.twitter.com/en/docs/api-reference-index)
 
-# Status
---IN PROGRESS--
-Email me: [rayranilfu7o7@gmail.com](rayranilfu7o7@gmail.com)
+## ISSUES
+Please submit your issues to Tweetur's github repository.
 

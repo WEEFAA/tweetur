@@ -1,8 +1,11 @@
 {
   "name": "tweetur",
-  "version": "1.2.4",
+  "version": "2.0.0",
   "description": "This module is for twitter api using application-only authentication.",
   "main": "index.js",
+  "scripts": {
+      "test": "jest"
+  },
   "keywords": [
     "twitter",
     "api",
@@ -13,11 +16,15 @@
   "author": "Ray Quijada <rayranilfu7o7@gmail.com> (http://twitter.com/rayranilweefa)",
   "license": "MIT",
   "dependencies": {
-    "btoa": "1.2.1",
+    "oauth-1.0a": "^2.2.6",
+    "query-string": "^6.12.1",
     "request": "2.88.0"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/WEEFAA/tweetur"
+    "type": "git",
+    "url": "https://github.com/WEEFAA/tweetur"
+  },
+  "devDependencies": {
+    "jest": "^26.0.1"
   }
 }
