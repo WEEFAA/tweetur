@@ -80,12 +80,9 @@ Tweetur.prototype.revoke = function(callback){
 		try{
 			const revokeUrl = "https://api.twitter.com/oauth2/invalidate_token"
 			// check if required parameters are passed
-			checkAuth(null, { access_token: this.bearer_token })
+			checkAuth(null, { bearer_token: this.bearer_token })
 			// test arguments
-			const evaluationOpts = {
-				allowFirstArgAsCallback: true,
-				credentials: { access_token: this.bearer_token }
-			}
+			const evaluationOpts = { allowFirstArgAsCallback: true }
 			const hasCallback = evaluateArgs(arguments,evaluationOpts)
 			// app tokens
 			const tokens = {
@@ -123,7 +120,7 @@ Tweetur.prototype.api = function(endpoint, params = {}, callback){
 		try{
 			const endsWithJSON = /.json$/
 			// check bearer token
-			checkAuth(null, { access_token: this.bearer_token })
+			checkAuth(null, { bearer_token: this.bearer_token })
 			// test args
 			const hasCallback = evaluateArgs(arguments)
 			this._request_api(endpoint, params, function(err,resp,body){

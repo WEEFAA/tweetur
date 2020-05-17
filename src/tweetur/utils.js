@@ -58,9 +58,9 @@ function evaluateArgs(args, opts = {}){
 	return hasCallback
 }
 
-function checkAuth(mode = "default", credentials = {}){
+function checkAuth(mode = "default", app = {}){
 	// check authentication state
-	const { consumer_key, consumer_secret, access_token, access_token_secret } = credentials 
+	const { consumer_key, consumer_secret, access_token, access_token_secret, bearer_token } = app 
 	switch(checkAuth){
 		case "credentials":
 			// check consumer_key & consumer_secret on authentication
@@ -75,7 +75,7 @@ function checkAuth(mode = "default", credentials = {}){
 			break
 		default: // auth required
 			// check access token
-			if(!access_token || typeof access_token !== "string"){
+			if(!bearer_token || typeof bearer_token !== "string"){
 				throw new Error("Access Token Invalid")
 			}
 	}
