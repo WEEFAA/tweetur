@@ -118,7 +118,7 @@ Tweetur.prototype.revoke = function(callback){
 	})
 }
 
-Tweetur.prototype.api = function(endpoint, params = {}, callback){
+Tweetur.prototype.get = function(endpoint, params = {}, callback){
 	return new Promise((resolve, reject) => {
 		try{
 			const endsWithJSON = /.json$/
