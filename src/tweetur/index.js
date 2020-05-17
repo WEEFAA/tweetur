@@ -104,7 +104,10 @@ Tweetur.prototype.revoke = function(callback){
 					if(hasCallback) return callback(err, {})
 					return reject(err)
 				}	
-				const data = JSON.parse(body) // parse body
+				// unset bearer token to null
+				this.bearer_token = null
+				// parse data
+				const data = JSON.parse(body)
 				// return data through calling callback or return a promise
 				if(hasCallback) return callback(null, data)
 				return resolve(data)
