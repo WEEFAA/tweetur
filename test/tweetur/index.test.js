@@ -28,12 +28,12 @@ test('should invalidate bearer_token on revoke', async () => {
 	const app = new Tweetur(myKeys)
 	await app.authenticate() // get fresh bearer_token
 	// call an endpoint to verify if bearer_token is valid
-	let me = await app.api('users/show.json', { screen_name: target_screenName })
+	let me = await app.get('users/show.json', { screen_name: target_screenName })
 	expect(me.screen_name.toLowerCase()).toBe(target_screenName.toLowerCase())
 	//revoke the token
 	await app.revoke()
 	// call the endpoint again
-	await expect(app.api('users/show', { screen_name: target_screenName })).rejects.toThrow(Error)
+	await expect(app.get('users/show', { screen_name: target_screenName })).rejects.toThrow(Error)
 })
 
 
