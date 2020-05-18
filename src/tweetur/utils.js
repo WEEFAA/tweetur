@@ -109,7 +109,7 @@ function validateAndGetProperties(keys = {}){
 				continue
 			}
 		}else{
-			if(typeof keys[tweetur_property] !== tweetur_property_type){
+			if(keys.hasOwnProperty(tweetur_property) && typeof keys[tweetur_property] !== tweetur_property_type){
 				throw new TypeError("Expects key of '"+ tweetur_property +"' with type of <"+ tweetur_property_type +">")
 			}else if(keys.hasOwnProperty(tweetur_property) && !regexp.test(keys[tweetur_property])){
 				throw new Error("Invalid value of '" + tweetur_property + "'") 
