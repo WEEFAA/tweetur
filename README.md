@@ -197,7 +197,7 @@ Tweetur endpoint helper methods are deprecated in Tweetur v2. As a replacement f
 
 ## THINGS YOU SHOULD BE AWARE OF!
 
-Twitter endpoints applies [rate limiting](https://developer.twitter.com/en/docs/basics/rate-limiting) to each Twitter endpoints. You might not encounter this issue when you're starting and just exploring the API, but you should be aware of this if you're frequently calling endpoints. If you are experiencing errors and can't seem to figure out why, go this [page](https://developer.twitter.com/en/docs/basics/response-codes) for list of errors.
+Twitter endpoints applies [rate limiting](https://developer.twitter.com/en/docs/basics/rate-limiting) to each Twitter endpoints. You might not encounter this issue when you're starting and just exploring the API, but you should be aware of this if you're frequently calling endpoints. If you are experiencing errors and can't seem to figure out why, go tp this [page](https://developer.twitter.com/en/docs/basics/response-codes) for list of errors.
 
 # FIND YOUR ENDPOINT HERE
 [API REFERENCE INDEX](https://developer.twitter.com/en/docs/api-reference-index)
