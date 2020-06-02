@@ -1,6 +1,6 @@
 {
   "name": "tweetur",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "This module is for twitter api using application-only authentication.",
   "main": "index.js",
   "scripts": {
